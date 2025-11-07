@@ -1,12 +1,14 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Paper, Table, Text, Title, Button, ActionIcon, Group, Modal, TextInput, Select, Stack, Grid, Collapse, Box, Card, Divider, Textarea } from '@mantine/core';
+import { IconEdit, IconTrash, IconFilter, IconX } from '@tabler/icons-react';
 import { ConsultaRepository } from '@/repositories/ConsultaRepository';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
 import { FuncionarioClinicaRepository } from '@/repositories/FuncionarioClinicaRepository';
 import { getCnpj } from '@/utils/storage';
 import type { Consulta } from '@/interfaces/consulta';
-import { Paper, Table, Text, Title, Button, ActionIcon, Group, Modal, TextInput, Select, Stack, Grid, Collapse, Box, Card, Divider } from '@mantine/core';
-import { IconEdit, IconTrash, IconFilter, IconX } from '@tabler/icons-react';
+import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
+import type { FuncionarioClinicaItem } from '@/interfaces/funcionarioClinica';
 
 function FloatingCircle({ size, top, left, delay = 0, color = '#f87537' }: {
   size: number;
@@ -52,7 +54,6 @@ export function ConsultasList() {
   const [error, setError] = useState<string | null>(null);
   const [editing, setEditing] = useState<Consulta | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<Consulta | null>(null);
-  const [statusChange, setStatusChange] = useState<Consulta | null>(null);
   const [editForm, setEditForm] = useState({
     data: '',
     hora: '',
@@ -94,7 +95,7 @@ export function ConsultasList() {
       setLoading(true);
       setError(null);
       const res = await consultaRepo.getAll();
-      const consultasFiltradas = (res.data || []).filter(c => c.clinicaCnpj === cnpj);
+      const consultasFiltradas = (res.data ?? []).filter((consulta) => consulta.clinicaCnpj === cnpj);
       setConsultas(consultasFiltradas);
     } catch (e) {
       setError((e as Error).message);
@@ -111,14 +112,14 @@ export function ConsultasList() {
     }
     try {
       const res = await animalClinicaRepo.listByClinica(cnpj);
-      const animaisList = (res.data || [])
-        .map(item => ({
+      const animaisList = (res.data ?? [])
+        .map((item: AnimalClinicaItem) => ({
           id: item.animal?.id || 0,
           nome: item.animal?.nome || '',
           especie: item.animal?.especie || null,
           tutorNome: item.animal?.tutor?.usuario?.nome || undefined,
         }))
-        .filter(a => a.id > 0 && a.nome);
+        .filter((animal) => animal.id > 0 && animal.nome);
       setAnimais(animaisList);
     } catch (e) {
       console.error('Erro ao carregar animais:', e);
@@ -134,12 +135,12 @@ export function ConsultasList() {
     }
     try {
       const res = await funcionarioClinicaRepo.listByClinica(cnpj);
-      const funcionariosList = (res.data || [])
-        .map(item => ({
+      const funcionariosList = (res.data ?? [])
+        .map((item: FuncionarioClinicaItem) => ({
           cpf: item.funcionarioCpf,
           nome: item.funcionario?.usuario?.nome || '',
         }))
-        .filter(f => f.nome && f.cpf);
+        .filter((funcionario) => funcionario.nome && funcionario.cpf);
       setFuncionarios(funcionariosList);
     } catch (e) {
       console.error('Erro ao carregar funcionários:', e);
@@ -149,7 +150,6 @@ export function ConsultasList() {
 
   function openEdit(consulta: Consulta) {
     setEditing(consulta);
-    const dataHora = new Date(consulta.data);
     const horaHora = new Date(consulta.hora);
     
     setEditForm({
@@ -235,7 +235,6 @@ export function ConsultasList() {
       setLoading(true);
       setError(null);
       await consultaRepo.update(consulta.id, { status: newStatus });
-      setStatusChange(null);
       await loadConsultas();
     } catch (e) {
       setError((e as Error).message);
@@ -269,8 +268,6 @@ export function ConsultasList() {
   const filteredConsultas = useMemo(() => {
     return consultas.filter((consulta) => {
       const animal = animais.find(a => a.id === consulta.animalId);
-      const funcionario = funcionarios.find(f => f.cpf === consulta.funcionarioCpf);
-
       if (filters.dataInicio) {
         const dataConsulta = new Date(consulta.data);
         const dataInicio = new Date(filters.dataInicio);
@@ -639,13 +636,13 @@ export function ConsultasList() {
               />
             </Grid.Col>
             <Grid.Col span={12}>
-              <TextInput
+              <Textarea
                 label="Observações"
                 placeholder="Observações sobre a consulta"
                 value={editForm.observacoes}
                 onChange={(e) => setEditForm({ ...editForm, observacoes: e.currentTarget.value })}
-                multiline
-                rows={3}
+                minRows={3}
+                autosize
               />
             </Grid.Col>
           </Grid>

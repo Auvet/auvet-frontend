@@ -1,12 +1,13 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Paper, Table, Text, Title, Button, ActionIcon, Group, Modal, TextInput, Select, Stack, Grid, Collapse, Box, Card, Divider, Badge } from '@mantine/core';
+import { IconEdit, IconTrash, IconFilter, IconX } from '@tabler/icons-react';
 import { VacinaRepository } from '@/repositories/VacinaRepository';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
 import { getCnpj } from '@/utils/storage';
-import type { Vacina } from '@/interfaces/vacina';
-import { Paper, Table, Text, Title, Button, ActionIcon, Group, Modal, TextInput, Select, Stack, Grid, Collapse, Box, Card, Divider, Badge } from '@mantine/core';
-import { IconEdit, IconTrash, IconFilter, IconX } from '@tabler/icons-react';
 import { VACINAS, FABRICANTES_VACINAS } from '@/utils/enums';
+import type { Vacina } from '@/interfaces/vacina';
+import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
 
 function FloatingCircle({ size, top, left, delay = 0, color = '#f87537' }: {
   size: number;
@@ -85,7 +86,7 @@ export function VacinasList() {
       setLoading(true);
       setError(null);
       const res = await vacinaRepo.getAll();
-      const vacinasFiltradas = (res.data || []).filter(v => v.clinicaCnpj === cnpj);
+      const vacinasFiltradas = (res.data ?? []).filter((vacina) => vacina.clinicaCnpj === cnpj);
       setVacinas(vacinasFiltradas);
     } catch (e) {
       setError((e as Error).message);
@@ -102,14 +103,14 @@ export function VacinasList() {
     }
     try {
       const res = await animalClinicaRepo.listByClinica(cnpj);
-      const animaisList = (res.data || [])
-        .map(item => ({
+      const animaisList = (res.data ?? [])
+        .map((item: AnimalClinicaItem) => ({
           id: item.animal?.id || 0,
           nome: item.animal?.nome || '',
           especie: item.animal?.especie || null,
           tutorNome: item.animal?.tutor?.usuario?.nome || undefined,
         }))
-        .filter(a => a.id > 0 && a.nome);
+        .filter((animal) => animal.id > 0 && animal.nome);
       setAnimais(animaisList);
     } catch (e) {
       console.error('Erro ao carregar animais:', e);

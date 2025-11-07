@@ -1,16 +1,17 @@
 import { useEffect, useState, useMemo } from 'react';
+import { Paper, Table, Text, Title, Button, ActionIcon, Group, Modal, TextInput, NumberInput, Select, Stack, Grid, Collapse, Tabs, Badge, Box, Card, Divider } from '@mantine/core';
+import { IconEdit, IconTrash, IconFilter, IconX, IconEye, IconVaccine, IconCalendar } from '@tabler/icons-react';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
 import { AnimalRepository } from '@/repositories/AnimalRepository';
 import { VacinaRepository } from '@/repositories/VacinaRepository';
 import { ConsultaRepository } from '@/repositories/ConsultaRepository';
 import { FuncionarioClinicaRepository } from '@/repositories/FuncionarioClinicaRepository';
 import { getCnpj } from '@/utils/storage';
+import { ESPECIES_ANIMAIS } from '@/utils/enums';
 import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
 import type { Vacina } from '@/interfaces/vacina';
 import type { Consulta } from '@/interfaces/consulta';
-import { Paper, Table, Text, Title, Button, ActionIcon, Group, Modal, TextInput, NumberInput, Select, Stack, Grid, Collapse, Tabs, Badge, Box, Card, Divider } from '@mantine/core';
-import { IconEdit, IconTrash, IconFilter, IconX, IconEye, IconVaccine, IconCalendar } from '@tabler/icons-react';
-import { ESPECIES_ANIMAIS } from '@/utils/enums';
+import type { FuncionarioClinicaItem } from '@/interfaces/funcionarioClinica';
 
 function FloatingCircle({ size, top, left, delay = 0, color = '#f87537' }: {
   size: number;
@@ -204,49 +205,31 @@ export function AnimaisList() {
     });
   }, [items, filters]);
 
-  const uniqueEspecies = useMemo(() => {
-    const especies = new Set<string>();
-    items.forEach((item) => {
-      if (item.animal?.especie) {
-        especies.add(item.animal.especie);
-      }
-    });
-    return Array.from(especies).sort().map((e) => ({ value: e, label: e }));
-  }, [items]);
-
-  const uniqueRacas = useMemo(() => {
-    const racas = new Set<string>();
-    items.forEach((item) => {
-      if (item.animal?.raca) {
-        racas.add(item.animal.raca);
-      }
-    });
-    return Array.from(racas).sort().map((r) => ({ value: r, label: r }));
-  }, [items]);
-
   async function openDetails(item: AnimalClinicaItem) {
     if (!item.animal?.id) return;
     setDetailsAnimal(item);
     setLoadingDetails(true);
     try {
       const cnpj = getCnpj();
+      const funcionarioPromise = cnpj
+        ? funcionarioClinicaRepo.listByClinica(cnpj)
+        : Promise.resolve({ data: [] as FuncionarioClinicaItem[] });
       const [vacinasRes, consultasRes, funcionariosRes] = await Promise.all([
         vacinaRepo.getByAnimalId(item.animal.id),
         consultaRepo.getByAnimalId(item.animal.id),
-        cnpj ? funcionarioClinicaRepo.listByClinica(cnpj) : Promise.resolve({ data: [] }),
+        funcionarioPromise,
       ]);
       setVacinas(vacinasRes.data || []);
       setConsultas(consultasRes.data || []);
       
-      if (funcionariosRes.data) {
-        const funcionariosList = funcionariosRes.data
-          .map(item => ({
-            cpf: item.funcionario?.cpf || '',
-            nome: item.funcionario?.usuario?.nome || '',
-          }))
-          .filter(f => f.cpf && f.nome);
-        setFuncionarios(funcionariosList);
-      }
+      const funcionariosData = funcionariosRes.data ?? [];
+      const funcionariosList = funcionariosData
+        .map((funcionario): { cpf: string; nome: string } => ({
+          cpf: funcionario.funcionario?.cpf || funcionario.funcionarioCpf || '',
+          nome: funcionario.funcionario?.usuario?.nome || '',
+        }))
+        .filter((funcionario) => funcionario.cpf !== '' && funcionario.nome !== '');
+      setFuncionarios(funcionariosList);
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -373,9 +356,13 @@ export function AnimaisList() {
                 label="Idade Mínima"
                 placeholder="0"
                 min={0}
-                value={filters.idadeMin ? parseInt(filters.idadeMin) : undefined}
-                onChange={(v) => setFilters({ ...filters, idadeMin: v?.toString() || '' })}
-                clearable
+                value={filters.idadeMin === '' ? undefined : Number(filters.idadeMin)}
+                onChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    idadeMin: value === '' ? '' : value.toString(),
+                  })
+                }
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 3 }}>
@@ -383,9 +370,13 @@ export function AnimaisList() {
                 label="Idade Máxima"
                 placeholder="0"
                 min={0}
-                value={filters.idadeMax ? parseInt(filters.idadeMax) : undefined}
-                onChange={(v) => setFilters({ ...filters, idadeMax: v?.toString() || '' })}
-                clearable
+                value={filters.idadeMax === '' ? undefined : Number(filters.idadeMax)}
+                onChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    idadeMax: value === '' ? '' : value.toString(),
+                  })
+                }
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 3 }}>
@@ -394,9 +385,13 @@ export function AnimaisList() {
                 placeholder="0.00"
                 min={0}
                 decimalScale={2}
-                value={filters.pesoMin ? parseFloat(filters.pesoMin) : undefined}
-                onChange={(v) => setFilters({ ...filters, pesoMin: v?.toString() || '' })}
-                clearable
+                value={filters.pesoMin === '' ? undefined : Number(filters.pesoMin)}
+                onChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    pesoMin: value === '' ? '' : value.toString(),
+                  })
+                }
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 3 }}>
@@ -405,9 +400,13 @@ export function AnimaisList() {
                 placeholder="0.00"
                 min={0}
                 decimalScale={2}
-                value={filters.pesoMax ? parseFloat(filters.pesoMax) : undefined}
-                onChange={(v) => setFilters({ ...filters, pesoMax: v?.toString() || '' })}
-                clearable
+                value={filters.pesoMax === '' ? undefined : Number(filters.pesoMax)}
+                onChange={(value) =>
+                  setFilters({
+                    ...filters,
+                    pesoMax: value === '' ? '' : value.toString(),
+                  })
+                }
               />
             </Grid.Col>
           </Grid>

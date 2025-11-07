@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
+import { Paper, Table, Text, Title, Box } from '@mantine/core';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
 import { getCnpj, getToken } from '@/utils/storage';
 import { decodeJWT } from '@/utils/jwt';
 import { cleanCPF } from '@/utils/cpfCnpj';
 import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
-import { Paper, Table, Text, Title, Box } from '@mantine/core';
 
 const animalClinicaRepo = new AnimalClinicaRepository();
 
@@ -71,16 +71,17 @@ export function TutorAnimais() {
 
       const animaisClinicaRes = await animalClinicaRepo.listByClinica(cnpj);
 
-      if (animaisClinicaRes.data) {
+      const animaisData = animaisClinicaRes.data ?? [];
+      if (animaisData.length > 0) {
         const cleanTutorCpf = cleanCPF(tutorCpf);
-        const animaisFiltrados = animaisClinicaRes.data
-          .filter(item => {
+        const animaisFiltrados = animaisData
+          .filter((item: AnimalClinicaItem) => {
             const animalTutorCpf = item.animal?.tutorCpf || item.animal?.tutor?.cpf;
             if (!animalTutorCpf) return false;
             const cleanAnimalTutorCpf = cleanCPF(animalTutorCpf);
             return cleanAnimalTutorCpf === cleanTutorCpf;
           })
-          .map(item => ({
+          .map((item: AnimalClinicaItem) => ({
             animalId: item.animalId,
             clinicaCnpj: cnpj,
             animal: item.animal,

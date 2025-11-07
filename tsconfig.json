@@ -16,12 +16,18 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["src/*"],
       "@/components/*": ["src/components/*"],
       "@/pages/*": ["src/pages/*"],
       "@/repositories/*": ["src/repositories/*"],
       "@/services/*": ["src/services/*"],
       "@/utils/*": ["src/utils/*"],
       "@/config/*": ["src/config/*"],
+      "@/hooks/*": ["src/hooks/*"],
+      "@/contexts/*": ["src/contexts/*"],
+      "@/interfaces/*": ["src/interfaces/*"],
+      "@/assets/*": ["src/assets/*"],
+      "@/styles/*": ["src/styles/*"],
       "@/types/*": ["src/types/*"]
     }
   },

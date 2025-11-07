@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Paper, Table, Text, Title, Box, Badge } from '@mantine/core';
 import { ConsultaRepository } from '@/repositories/ConsultaRepository';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
 import { FuncionarioClinicaRepository } from '@/repositories/FuncionarioClinicaRepository';
@@ -6,7 +7,8 @@ import { getCnpj, getToken } from '@/utils/storage';
 import { decodeJWT } from '@/utils/jwt';
 import { cleanCPF } from '@/utils/cpfCnpj';
 import type { Consulta } from '@/interfaces/consulta';
-import { Paper, Table, Text, Title, Box, Badge } from '@mantine/core';
+import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
+import type { FuncionarioClinicaItem } from '@/interfaces/funcionarioClinica';
 
 const consultaRepo = new ConsultaRepository();
 const animalClinicaRepo = new AnimalClinicaRepository();
@@ -78,17 +80,18 @@ export function TutorConsultas() {
       const animaisClinicaRes = await animalClinicaRepo.listByClinica(cnpj);
       const funcionariosRes = await funcionarioClinicaRepo.listByClinica(cnpj);
 
-      if (animaisClinicaRes.data) {
+      const animaisData = animaisClinicaRes.data ?? [];
+      if (animaisData.length > 0) {
         const cleanTutorCpf = cleanCPF(tutorCpf);
-        const animaisFiltrados = animaisClinicaRes.data
-          .filter(item => {
+        const animaisFiltrados = animaisData
+          .filter((item: AnimalClinicaItem) => {
             const animalTutorCpf = item.animal?.tutorCpf || item.animal?.tutor?.cpf;
             if (!animalTutorCpf) return false;
             const cleanAnimalTutorCpf = cleanCPF(animalTutorCpf);
             return cleanAnimalTutorCpf === cleanTutorCpf;
           })
-          .map(item => ({ id: item.animalId, nome: item.animal?.nome || '' }))
-          .filter(a => a.id && a.nome);
+          .map((item: AnimalClinicaItem) => ({ id: item.animalId, nome: item.animal?.nome || '' }))
+          .filter((animal) => animal.id && animal.nome);
 
         setAnimais(animaisFiltrados);
 
@@ -109,13 +112,14 @@ export function TutorConsultas() {
         setConsultas(allConsultas);
       }
 
-      if (funcionariosRes.data) {
-        const funcionariosList = funcionariosRes.data
-          .map(item => ({
+      const funcionariosData = funcionariosRes.data ?? [];
+      if (funcionariosData.length > 0) {
+        const funcionariosList = funcionariosData
+          .map((item: FuncionarioClinicaItem) => ({
             cpf: item.funcionarioCpf,
             nome: item.funcionario?.usuario?.nome || '',
           }))
-          .filter(f => f.nome);
+          .filter((funcionario) => funcionario.nome);
         setFuncionarios(funcionariosList);
       }
     } catch (err) {

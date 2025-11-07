@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Button, Grid, Paper, Text, TextInput, Title, Group, Select, Box, Textarea } from '@mantine/core';
 import { ConsultaRepository } from '@/repositories/ConsultaRepository';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
 import { FuncionarioClinicaRepository } from '@/repositories/FuncionarioClinicaRepository';
-import { Button, Grid, Paper, Text, TextInput, Title, Group, Select, Box } from '@mantine/core';
+import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
+import type { FuncionarioClinicaItem } from '@/interfaces/funcionarioClinica';
 import { getCnpj } from '@/utils/storage';
 
 function FloatingCircle({ size, top, left, delay = 0, color = '#f87537' }: {
@@ -71,13 +73,13 @@ export function ConsultasCreate() {
     }
     try {
       const res = await animalClinicaRepo.listByClinica(cnpj);
-      const animaisList = (res.data || [])
-        .map(item => ({
+      const animaisList = (res.data ?? [])
+        .map((item: AnimalClinicaItem) => ({
           id: item.animal?.id || 0,
           nome: item.animal?.nome || '',
           especie: item.animal?.especie || null,
         }))
-        .filter(a => a.id > 0 && a.nome);
+        .filter((animal) => animal.id > 0 && animal.nome);
       setAnimais(animaisList);
     } catch (e) {
       console.error('Erro ao carregar animais:', e);
@@ -93,12 +95,12 @@ export function ConsultasCreate() {
     }
     try {
       const res = await funcionarioClinicaRepo.listByClinica(cnpj);
-      const funcionariosList = (res.data || [])
-        .map(item => ({
+      const funcionariosList = (res.data ?? [])
+        .map((item: FuncionarioClinicaItem) => ({
           cpf: item.funcionarioCpf,
           nome: item.funcionario?.usuario?.nome || '',
         }))
-        .filter(f => f.nome && f.cpf);
+        .filter((funcionario) => funcionario.nome && funcionario.cpf);
       setFuncionarios(funcionariosList);
     } catch (e) {
       console.error('Erro ao carregar funcionários:', e);
@@ -257,13 +259,13 @@ export function ConsultasCreate() {
             />
           </Grid.Col>
           <Grid.Col span={12}>
-            <TextInput
+            <Textarea
               label="Observações"
               placeholder="Observações sobre a consulta"
               value={form.observacoes}
               onChange={(e) => setForm({ ...form, observacoes: e.currentTarget.value })}
-              multiline
-              rows={3}
+              minRows={3}
+              autosize
             />
           </Grid.Col>
         </Grid>

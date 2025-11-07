@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
+import { Button, Grid, Paper, Text, TextInput, Title, Group, Select, Box } from '@mantine/core';
 import { VacinaRepository } from '@/repositories/VacinaRepository';
 import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
-import { Button, Grid, Paper, Text, TextInput, Title, Group, Select, Box } from '@mantine/core';
 import { getCnpj } from '@/utils/storage';
 import { VACINAS, FABRICANTES_VACINAS } from '@/utils/enums';
+import type { AnimalClinicaItem } from '@/interfaces/animalClinica';
 
 function FloatingCircle({ size, top, left, delay = 0, color = '#f87537' }: {
   size: number;
@@ -61,13 +62,13 @@ export function VacinasCreate() {
     }
     try {
       const res = await animalClinicaRepo.listByClinica(cnpj);
-      const animaisList = (res.data || [])
-        .map(item => ({
+      const animaisList = (res.data ?? [])
+        .map((item: AnimalClinicaItem) => ({
           id: item.animal?.id || 0,
           nome: item.animal?.nome || '',
           especie: item.animal?.especie || null,
         }))
-        .filter(a => a.id > 0 && a.nome);
+        .filter((animal) => animal.id > 0 && animal.nome);
       setAnimais(animaisList);
     } catch (e) {
       console.error('Erro ao carregar animais:', e);

@@ -1,10 +1,4 @@
-import { useEffect, useState } from 'react';
-import { getCnpj } from '@/utils/storage';
-import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
-import { FuncionarioClinicaRepository } from '@/repositories/FuncionarioClinicaRepository';
-import { TutorClinicaRepository } from '@/repositories/TutorClinicaRepository';
-import { ConsultaRepository } from '@/repositories/ConsultaRepository';
-import { VacinaRepository } from '@/repositories/VacinaRepository';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Paper, Title, Text, SimpleGrid, Box, Loader, Group, Container } from '@mantine/core';
 import {
   IconPaw,
@@ -13,6 +7,12 @@ import {
   IconCalendarEvent,
   IconVaccine,
 } from '@tabler/icons-react';
+import { getCnpj } from '@/utils/storage';
+import { AnimalClinicaRepository } from '@/repositories/AnimalClinicaRepository';
+import { FuncionarioClinicaRepository } from '@/repositories/FuncionarioClinicaRepository';
+import { TutorClinicaRepository } from '@/repositories/TutorClinicaRepository';
+import { ConsultaRepository } from '@/repositories/ConsultaRepository';
+import { VacinaRepository } from '@/repositories/VacinaRepository';
 
 function FloatingCircle({ size, top, left, delay = 0, color = '#f87537' }: {
   size: number;
@@ -77,7 +77,7 @@ const vacinaRepo = new VacinaRepository();
 interface MetricCardProps {
   title: string;
   value: number;
-  icon: React.ReactNode;
+  icon: ReactNode;
   color: string;
 }
 
@@ -203,6 +203,10 @@ export function Metricas() {
 
   return (
     <Box style={{ minHeight: '100vh', background: 'white', position: 'relative' }}>
+      <FloatingCircle size={140} top="12%" left="6%" delay={0.5} />
+      <FloatingCircle size={110} top="68%" left="4%" delay={1.2} color="#ff9f00" />
+      <BlobShape size={260} top="20%" left="75%" delay={0.8} color="#ff9f00" />
+      <BlobShape size={220} top="65%" left="80%" delay={1.5} />
       <Container size="xl" style={{ maxWidth: 1195, paddingLeft: 40, paddingRight: 40, paddingTop: 40, paddingBottom: 60, position: 'relative' }}>
         <Box mb="xl">
           <Title order={1} fw={700} style={{ color: '#1a1a1a', letterSpacing: '0.02em', marginBottom: 8 }}>

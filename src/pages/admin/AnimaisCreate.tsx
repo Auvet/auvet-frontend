@@ -197,9 +197,13 @@ export function AnimaisCreate() {
             <NumberInput
               label="Idade"
               min={0}
-              value={form.idade ? parseInt(form.idade) : undefined}
-              onChange={(v) => setForm({ ...form, idade: v !== null && v !== undefined ? v.toString() : '' })}
-              clearable
+              value={form.idade === '' ? undefined : Number(form.idade)}
+              onChange={(value) =>
+                setForm({
+                  ...form,
+                  idade: value === '' ? '' : value.toString(),
+                })
+              }
               placeholder="0"
             />
           </Grid.Col>
@@ -208,9 +212,13 @@ export function AnimaisCreate() {
               label="Peso (kg)"
               min={0}
               decimalScale={2}
-              value={form.peso ? parseFloat(form.peso) : undefined}
-              onChange={(v) => setForm({ ...form, peso: v !== null && v !== undefined ? v.toString() : '' })}
-              clearable
+              value={form.peso === '' ? undefined : Number(form.peso)}
+              onChange={(value) =>
+                setForm({
+                  ...form,
+                  peso: value === '' ? '' : value.toString(),
+                })
+              }
               placeholder="0.00"
             />
           </Grid.Col>
