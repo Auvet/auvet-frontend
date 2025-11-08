@@ -1034,6 +1034,44 @@ export function Home() {
             >
               <IconBrandInstagram size={24} color="white" />
             </Box>
+            <Group gap="md" mt="md">
+              <Text
+                component={Link}
+                to="/termos-de-uso"
+                style={{
+                  color: '#999',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  fontSize: '15px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.textDecoration = 'none';
+                }}
+              >
+                Termos de Uso
+              </Text>
+              <Text
+                component={Link}
+                to="/politica-de-privacidade"
+                style={{
+                  color: '#999',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  fontSize: '15px',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.textDecoration = 'underline';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.textDecoration = 'none';
+                }}
+              >
+                Política de Privacidade
+              </Text>
+            </Group>
           </Stack>
 
           <Text

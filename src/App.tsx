@@ -25,6 +25,8 @@ import { TutorVacinas } from '@/pages/tutor/TutorVacinas';
 import { TutorConsultas } from '@/pages/tutor/TutorConsultas';
 import { TutorPerfil } from '@/pages/tutor/TutorPerfil';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
+import { Terms } from '@/pages/Terms';
+import { Privacy } from '@/pages/Privacy';
 
 export function App() {
   return (
@@ -33,6 +35,8 @@ export function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registrar-clinica" element={<RegisterClinica />} />
+        <Route path="/termos-de-uso" element={<Terms />} />
+        <Route path="/politica-de-privacidade" element={<Privacy />} />
         <Route
           path="/dashboard/admin"
           element={
