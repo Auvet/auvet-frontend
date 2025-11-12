@@ -170,10 +170,12 @@ export function VacinasCreate() {
               label="Nome da Vacina"
               required
               placeholder="Selecione a vacina"
-              value={form.nome}
+              value={form.nome || null}
               onChange={(v) => setForm({ ...form, nome: v || '' })}
               data={VACINAS}
               searchable
+              clearable
+              key={form.nome === '' ? 'vacina-reset' : 'vacina'}
             />
           </Grid.Col>
           {form.nome === 'Outros' && (
@@ -191,11 +193,12 @@ export function VacinasCreate() {
             <Select
               label="Fabricante"
               placeholder="Selecione o fabricante"
-              value={form.fabricante}
+              value={form.fabricante || null}
               onChange={(v) => setForm({ ...form, fabricante: v || '' })}
               data={FABRICANTES_VACINAS}
               searchable
               clearable
+              key={form.fabricante === '' ? 'fabricante-reset' : 'fabricante'}
             />
           </Grid.Col>
           {form.fabricante === 'Outros' && (
@@ -230,10 +233,12 @@ export function VacinasCreate() {
               label="Animal"
               required
               placeholder="Selecione o animal"
-              value={form.animalId}
+              value={form.animalId || null}
               onChange={(v) => setForm({ ...form, animalId: v || '' })}
               data={animais.map(a => ({ value: a.id.toString(), label: `${a.nome}${a.especie ? ` (${a.especie})` : ''}` }))}
               searchable
+              clearable
+              key={form.animalId === '' ? 'animal-reset' : 'animal'}
             />
           </Grid.Col>
         </Grid>

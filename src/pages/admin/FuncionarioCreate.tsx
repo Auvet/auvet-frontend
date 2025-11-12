@@ -133,10 +133,12 @@ export function FuncionarioCreate() {
               label="Cargo"
               required
               placeholder="Selecione o cargo"
-              value={form.cargo}
+              value={form.cargo || null}
               onChange={(v) => setForm({ ...form, cargo: v || '' })}
               data={CARGOS_VETERINARIOS}
               searchable
+              clearable
+              key={form.cargo === '' ? 'cargo-reset' : 'cargo'}
             />
           </Grid.Col>
           {form.cargo === 'Outros' && (

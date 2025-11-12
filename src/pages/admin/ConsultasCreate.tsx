@@ -224,10 +224,12 @@ export function ConsultasCreate() {
               label="Animal"
               required
               placeholder="Selecione o animal"
-              value={form.animalId}
+              value={form.animalId || null}
               onChange={(v) => setForm({ ...form, animalId: v || '' })}
               data={animais.map(a => ({ value: a.id.toString(), label: `${a.nome}${a.especie ? ` (${a.especie})` : ''}` }))}
               searchable
+              clearable
+              key={form.animalId === '' ? 'animal-reset' : 'animal'}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>
@@ -235,10 +237,12 @@ export function ConsultasCreate() {
               label="Funcionário"
               required
               placeholder="Selecione o funcionário"
-              value={form.funcionarioCpf}
+              value={form.funcionarioCpf || null}
               onChange={(v) => setForm({ ...form, funcionarioCpf: v || '' })}
               data={funcionarios.map(f => ({ value: f.cpf, label: f.nome }))}
               searchable
+              clearable
+              key={form.funcionarioCpf === '' ? 'funcionario-reset' : 'funcionario'}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>

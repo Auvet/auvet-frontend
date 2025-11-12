@@ -159,6 +159,7 @@ export function AnimaisCreate() {
               data={ESPECIES_ANIMAIS}
               searchable
               clearable
+              key={form.especie === '' ? 'especie-reset' : 'especie'}
             />
           </Grid.Col>
           {form.especie === 'Outros' && (
@@ -191,6 +192,7 @@ export function AnimaisCreate() {
               ]}
               clearable
               placeholder="Selecione"
+              key={form.sexo === '' ? 'sexo-reset' : 'sexo'}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>
@@ -205,6 +207,7 @@ export function AnimaisCreate() {
                 })
               }
               placeholder="0"
+              key={form.idade === '' ? 'idade-reset' : 'idade'}
             />
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 6 }}>
@@ -220,6 +223,7 @@ export function AnimaisCreate() {
                 })
               }
               placeholder="0.00"
+              key={form.peso === '' ? 'peso-reset' : 'peso'}
             />
           </Grid.Col>
         </Grid>
